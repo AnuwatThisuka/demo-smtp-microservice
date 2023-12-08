@@ -17,7 +17,9 @@ func ListenAndServe(app *fiber.App) error {
 	api := app.Group("/api")
 
 	api.Get("/health", func(c *fiber.Ctx) error {
-		return c.SendString("OK")
+		return c.JSON(fiber.Map{
+			"status": "ok",
+		})
 	})
 
 	api.Post("/send", emailController.SendPlainTextEmail)

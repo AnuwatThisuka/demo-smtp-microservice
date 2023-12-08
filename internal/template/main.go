@@ -63,5 +63,5 @@ func (t *TemplateService) ParseTemplate(name string, content map[string]any) (*b
 }
 
 func getPath(name string) string {
-	return "templates/verification-code/" + name + ".html"
+	return "templates/" + name + ".html"
 }

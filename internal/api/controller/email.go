@@ -30,6 +30,17 @@ func NewEmailController() *EmailController {
 	}
 }
 
+// Handler functions
+// SendPlainTextEmail godoc
+// @Summary Send plain text email
+// @Description Send plain text email
+// @Tags Email
+// @Accept json
+// @Produce json
+// @Param body body types.PlainTextEmail true "body"
+// @Success 201 {object} types.SuccessResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /send [post]
 func (e *EmailController) SendPlainTextEmail(c *fiber.Ctx) error {
 	var bodyEmail types.PlainTextEmail
 
@@ -61,6 +72,17 @@ func (e *EmailController) SendPlainTextEmail(c *fiber.Ctx) error {
 	return nil
 }
 
+// SendTemplateEmail godoc
+// @Summary Send template email
+// @Description Send template email
+// @Tags Email
+// @Accept json
+// @Produce json
+// @Param slug path string true "Template slug"
+// @Param body body types.TemplateEmail true "body"
+// @Success 201 {object} types.SuccessResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /send/{slug} [post]
 func (e *EmailController) SendTemplateEmail(ctx *fiber.Ctx) error {
 	var templateEmail types.TemplateEmail
 

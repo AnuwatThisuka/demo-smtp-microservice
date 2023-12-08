@@ -1,0 +1,106 @@
+basePath: /api
+definitions:
+  types.ErrorResponse:
+    properties:
+      errors:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+  types.PlainTextEmail:
+    properties:
+      body:
+        type: string
+      subject:
+        type: string
+      to:
+        type: string
+    required:
+    - subject
+    - to
+    type: object
+  types.SuccessResponse:
+    properties:
+      data:
+        type: string
+    type: object
+  types.TemplateEmail:
+    properties:
+      data:
+        additionalProperties: {}
+        type: object
+      subject:
+        type: string
+      to:
+        type: string
+    required:
+    - subject
+    - to
+    type: object
+host: localhost:8082
+info:
+  contact: {}
+  description: This is a demo SMTP API server.
+  title: Demo SMTP API
+  version: "1"
+paths:
+  /send:
+    post:
+      consumes:
+      - application/json
+      description: Send plain text email
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/types.PlainTextEmail'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Send plain text email
+      tags:
+      - Email
+  /send/{slug}:
+    post:
+      consumes:
+      - application/json
+      description: Send template email
+      parameters:
+      - description: Template slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/types.TemplateEmail'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Send template email
+      tags:
+      - Email
+swagger: "2.0"

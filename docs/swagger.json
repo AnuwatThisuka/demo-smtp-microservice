@@ -1,0 +1,161 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a demo SMTP API server.",
+        "title": "Demo SMTP API",
+        "contact": {},
+        "version": "1"
+    },
+    "host": "localhost:8082",
+    "basePath": "/api",
+    "paths": {
+        "/send": {
+            "post": {
+                "description": "Send plain text email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Email"
+                ],
+                "summary": "Send plain text email",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.PlainTextEmail"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/send/{slug}": {
+            "post": {
+                "description": "Send template email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Email"
+                ],
+                "summary": "Send template email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template slug",
+                        "name": "slug",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.TemplateEmail"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "types.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.PlainTextEmail": {
+            "type": "object",
+            "required": [
+                "subject",
+                "to"
+            ],
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.TemplateEmail": {
+            "type": "object",
+            "required": [
+                "subject",
+                "to"
+            ],
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

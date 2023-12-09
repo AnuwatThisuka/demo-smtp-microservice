@@ -4,6 +4,7 @@ import (
 	"context"
 	"demo-smtp/internal/smtp"
 	"demo-smtp/internal/types"
+	"fmt"
 	"log/slog"
 )
 
@@ -39,6 +40,7 @@ func (r *RabbitQueue[T]) Read(ctx context.Context) {
 				continue
 			}
 
+			fmt.Println(data)
 			err := smtp.SendEmail(data.Data)
 			slog.Info("Sending email")
 

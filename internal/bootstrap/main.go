@@ -31,8 +31,6 @@ func Start() {
 
 	go onShutdown(app)
 
-	go onShutdown(app)
-
 	err = router.ListenAndServe(app)
 
 	if err != nil {

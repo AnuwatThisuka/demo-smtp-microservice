@@ -5,6 +5,7 @@
     "apikey",
     "brevo",
     "godoc",
+    "gofiber",
     "missingkey",
     "rabbitmq",
     "streadway",

@@ -34,18 +34,29 @@ func NewProducer[T any]() *Producer[T] {
 		slog.Error("Failed to open a channel: " + err.Error())
 	}
 
-	err = channel.ExchangeDeclare(
-		"mails",
-		"direct",
-		true,
-		false,
-		false,
-		false,
-		nil,
+	queue, err := channel.QueueDeclare(
+		"mails", // name
+		false,   // durable
+		false,   // auto delete
+		false,   // exclusive
+		false,   // no wait
+		nil,     // args
 	)
 
 	if err != nil {
-		slog.Error("Failed to declare an exchange: " + err.Error())
+		slog.Error("Failed to declare a queue: " + err.Error())
+	}
+
+	err = channel.QueueBind(
+		queue.Name, // queue name
+		"mail",     // routing key
+		"mails",    // exchange
+		false,      // no wait
+		nil,        // args
+	)
+
+	if err != nil {
+		slog.Error("Failed to bind a queue: " + err.Error())
 	}
 
 	return &Producer[T]{

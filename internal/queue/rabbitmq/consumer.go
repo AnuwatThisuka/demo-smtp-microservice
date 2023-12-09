@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"demo-smtp/internal/config"
 	"demo-smtp/internal/types"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 
@@ -12,6 +13,7 @@ import (
 type Consumer[T any] struct {
 	QueueName string
 	Channel   *amqp.Channel
+	ReadCh    chan types.ReadData[T]
 }
 
 func NewConsumer[T any]() *Consumer[T] {
@@ -56,44 +58,37 @@ func NewConsumer[T any]() *Consumer[T] {
 
 func (c *Consumer[T]) Read(ch chan<- types.ReadData[T]) {
 
-	q, err := c.Channel.QueueDeclare(
-		c.QueueName,
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
+	for {
+		message, err := c.Channel.Consume(
+			c.QueueName,
+			"",
+			true,
+			false,
+			false,
+			false,
+			nil,
+		)
 
-	if err != nil {
-		slog.Error("Failed to declare a queue: " + err.Error())
-	}
-
-	msgs, err := c.Channel.Consume(
-		q.Name,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-
-	if err != nil {
-		slog.Error("Failed to register a consumer: " + err.Error())
-	}
-
-	forever := make(chan bool)
-
-	go func() {
-		for d := range msgs {
-			ch <- types.ReadData[T]{
-				Data: d.Body,
-			}
+		if err != nil {
+			ch <- types.ReadData[T]{Data: nil, Err: err}
+			continue
 		}
-	}()
 
-	slog.Info(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+		var model T
 
+		delivery := <-message
+
+		err = json.Unmarshal(delivery.Body, &model)
+
+		if err != nil {
+			ch <- types.ReadData[T]{Data: nil, Err: err}
+			continue
+		}
+
+		ch <- types.ReadData[T]{Data: &model, Err: nil}
+	}
+}
+
+func (c *Consumer[T]) Close() error {
+	return c.Channel.Close()
 }

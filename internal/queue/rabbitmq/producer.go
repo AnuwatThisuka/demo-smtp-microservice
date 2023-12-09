@@ -2,6 +2,7 @@ package rabbitmq
 
 import (
 	"demo-smtp/internal/config"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 
@@ -54,9 +55,13 @@ func NewProducer[T any]() *Producer[T] {
 }
 
 func (p *Producer[T]) Publish(mail T) {
-	body := []byte{}
+	body, err := json.Marshal(mail)
 
-	err := p.Channel.Publish(
+	if err != nil {
+		slog.Error("Failed to marshal mail: " + err.Error())
+	}
+
+	err = p.Channel.Publish(
 		"mails",
 		"mail",
 		false,

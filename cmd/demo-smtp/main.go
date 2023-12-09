@@ -9,7 +9,6 @@ import (
 // @version 1
 // @host localhost:8082
 // @BasePath /api
-
 func main() {
 	bootstrap.Start()
 }

@@ -3,11 +3,14 @@ package bootstrap
 import (
 	"demo-smtp/internal/api/router"
 	"demo-smtp/internal/config"
-	newSmtp "demo-smtp/internal/smtp"
-	"fmt"
+	"demo-smtp/internal/logger"
+	"demo-smtp/internal/queue"
 	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/streadway/amqp"
+	"github.com/gofiber/fiber/v2"
 )
 
 func Start() {
@@ -18,31 +21,17 @@ func Start() {
 		slog.Error("Failed to load envs: " + err.Error())
 	}
 
-	fmt.Println("RabbitMQ in Golang: Getting started tutorial")
+	logger.SetupLog()
 
-	connection, err := amqp.Dial(
-		fmt.Sprintf("amqp://%s:%s@%s:%d/",
-			config.MainConfig.RabbitMQ.Username,
-			config.MainConfig.RabbitMQ.Password,
-			config.MainConfig.RabbitMQ.Host,
-			config.MainConfig.RabbitMQ.Port,
-		),
-	)
-	if err != nil {
-		panic(err)
-	}
-	defer connection.Close()
+	q := queue.NewQueue()
 
-	fmt.Println("Successfully connected to RabbitMQ instance")
-
-	SetupLog()
-
-	err = newSmtp.Ping()
-	if err != nil {
-		slog.Error(err.Error())
-	}
+	go queue.StartWorker(q)
 
 	app := router.CreateFiberInstance()
+
+	go onShutdown(app)
+
+	go onShutdown(app)
 
 	err = router.ListenAndServe(app)
 
@@ -50,4 +39,16 @@ func Start() {
 		slog.Error("Failed to start HTTP server: " + err.Error())
 	}
 
+}
+
+func onShutdown(app *fiber.App) {
+	stop := make(chan os.Signal, 1)
+
+	//lint:ignore SA1016 i dont know, it just works lol
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	<-stop
+
+	queue.StopWorker()
+	_ = app.Shutdown()
+	os.Exit(0)
 }

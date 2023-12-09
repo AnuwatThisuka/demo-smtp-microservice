@@ -2,15 +2,30 @@ package rabbitmq
 
 import (
 	"context"
-	"fmt"
+	"demo-smtp/internal/types"
 )
 
 type RabbitQueue[T any] struct {
+	producer *Producer[T]
 }
 
-func (r *RabbitQueue[T]) Read(ctx context.Context) {
+// Ping implements types.Queue.
+func (*RabbitQueue[T]) Ping() (string, error) {
+	panic("unimplemented")
 }
 
-func (r *RabbitQueue[T]) Write(data T) {
-	fmt.Println("RabbitMQ: Write", data)
+// Read implements types.Queue.
+func (*RabbitQueue[T]) Read(ctx context.Context) {
+	panic("unimplemented")
+}
+
+func (*RabbitQueue[T]) Write(mail types.Mail) error {
+	panic("unimplemented")
+}
+
+// NewRabbitQueue returns a new RabbitQueue.
+func NewRabbitQueue() types.Queue[types.Mail] {
+	return &RabbitQueue[types.Mail]{
+		producer: NewProducer[types.Mail](),
+	}
 }

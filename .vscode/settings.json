@@ -1,4 +1,13 @@
 {
   "nuxt.isNuxtApp": false,
-  "cSpell.words": ["apikey", "brevo", "godoc", "missingkey", "tmpl"]
+  "cSpell.words": [
+    "amqp",
+    "apikey",
+    "brevo",
+    "godoc",
+    "missingkey",
+    "rabbitmq",
+    "streadway",
+    "tmpl"
+  ]
 }

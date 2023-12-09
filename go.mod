@@ -48,4 +48,5 @@ require (
 	github.com/gofiber/fiber/v2 v2.51.0
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/lmittmann/tint v1.0.3
+	github.com/streadway/amqp v1.1.0
 )

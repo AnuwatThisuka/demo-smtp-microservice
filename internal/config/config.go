@@ -25,6 +25,15 @@ type Kafka struct {
 	Brokers []string
 }
 
+type RabbitMQ struct {
+	Host     string
+	Port     int
+	Enabled  bool
+	Username string
+	Password string
+	Topic    string
+}
+
 type SMTP struct {
 	Host     string
 	Port     int

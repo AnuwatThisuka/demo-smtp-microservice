@@ -3,10 +3,10 @@ package controller
 import (
 	"demo-smtp/internal/api"
 	"demo-smtp/internal/config"
+	"demo-smtp/internal/queue"
 	newSmtp "demo-smtp/internal/smtp"
 	"demo-smtp/internal/template"
 	"demo-smtp/internal/types"
-	"fmt"
 
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -61,12 +61,13 @@ func (e *EmailController) SendPlainTextEmail(c *fiber.Ctx) error {
 	}
 
 	// newSmtp.SendEmail(&mail)
-	err := newSmtp.SendEmail(&mail)
+	// err := newSmtp.SendEmail(&mail)
+	queue.Queue.Write(mail)
 
-	if err != nil {
-		fmt.Println("Error sending email", err)
-		return api.Err(c, fiber.StatusInternalServerError, "Error getting queue", err)
-	}
+	// if err != nil {
+	// 	fmt.Println("Error sending email", err)
+	// 	return api.Err(c, fiber.StatusInternalServerError, "Error getting queue", err)
+	// }
 
 	api.Success(c, fiber.StatusCreated, "Email sent successfully")
 	return nil

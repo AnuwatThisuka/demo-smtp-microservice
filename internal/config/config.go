@@ -7,6 +7,7 @@ type Config struct {
 	Kafka          Kafka
 	SMTP           SMTP
 	RateLimit      int
+	RabbitMQ       RabbitMQ
 }
 
 type Redis struct {
@@ -28,10 +29,8 @@ type Kafka struct {
 type RabbitMQ struct {
 	Host     string
 	Port     int
-	Enabled  bool
 	Username string
 	Password string
-	Topic    string
 }
 
 type SMTP struct {
